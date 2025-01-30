@@ -46,11 +46,11 @@ Replace verson with the current release tag (ex. 0.0.2)
 
 Once the library is in your project, you need to initialize the font.
 
+Keep in mind when you instantiate the font, it creates a new cache, meaning this method should be called **ONCE**. Not in any sort of loop, or for an example, on game tick.
+
 ```bash
 final UnicodeGlyphFont font = new UnicodeGlyphFont(new Font("Arial", Font.PLAIN, 30));
 ```
-
-Keep in mind when you instantiate the font, it saves itself as a cache, meaning this method should be called **ONCE**. Not in any sort of loop, or for an example, on game tick.
 
 Drawing a string is just as easy.
 
