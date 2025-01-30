@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id ('com.github.johnrengelman.shadow') version "8.1.1"
 }
 
 group = 'com.github.BatSleep'
@@ -27,6 +28,15 @@ dependencies {
 
     implementation "org.lwjgl:lwjgl:2.9.4-nightly"
     implementation "org.lwjgl:util:2.9.4-nightly"
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+    relocate("org.lwjgl", "com.github.BatSleep.shadowed.lwjgl")
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
 
 test {
