@@ -17,35 +17,14 @@ public class UnicodeGlyphFont {
     private final int MARGIN;
     private final int spacing;
 
-    /**
-     * Construct a glyph font with specified font
-     * Defaults to use antialiasing, a spacing of 0 and defaults to initialise a cache with ASCII characters
-     *
-     * @param font the font to use
-     */
     public UnicodeGlyphFont(Font font) {
         this(font, true);
     }
 
-    /**
-     * Construct a glyph font with specified font and specified anti-aliasing preferences
-     * Defaults to initialise a cache with ASCII characters and a spacing of 0
-     *
-     * @param font      the font to use
-     * @param antiAlias the anti-aliasing preference
-     */
     public UnicodeGlyphFont(Font font, boolean antiAlias) {
         this(font, antiAlias, 0, 0);
     }
 
-    /**
-     * Construct a glyph font with specified font, specified anti-aliasing preferences and specified
-     * initial glyph pages to cache
-     *
-     * @param font         the font to use
-     * @param antiAlias    the anti-aliasing preference
-     * @param initialCache the initial glyph pages to cache
-     */
     public UnicodeGlyphFont(Font font, boolean antiAlias, int spacing, int... initialCache) {
         this.font = font;
         this.antiAlias = antiAlias;
@@ -56,15 +35,6 @@ public class UnicodeGlyphFont {
             setupGlyph(id);
     }
 
-    /**
-     * Draws a specified string to the screen with the specified x, y co-ordinates and colour
-     *
-     * @param text   the text to draw
-     * @param x      the x co-ordinate
-     * @param y      the y co-ordinate
-     * @param colour the colour
-     * @return the width of the string drawn
-     */
     public float drawString(String text, float x, float y, int colour) {
         glPushMatrix();
         boolean blend = glIsEnabled(GL_BLEND);
@@ -98,134 +68,22 @@ public class UnicodeGlyphFont {
         return width;
     }
 
-    /**
-     * Draws a specified character to the screen with the specified x, y co-ordinates and colour
-     *
-     * @param character the character to draw
-     * @param x         the x co-ordinate
-     * @param y         the y co-ordinate
-     * @param colour    the colour
-     * @return the width of the character drawn
-     */
-    public float drawCharacter(char character, float x, float y, int colour) {
-        glPushMatrix();
-        boolean blend = glIsEnabled(GL_BLEND);
-        boolean lighting = glIsEnabled(GL_LIGHTING);
-        boolean texture = glIsEnabled(GL_TEXTURE_2D);
-        if (!texture)
-            glEnable(GL_TEXTURE_2D);
-        if (!blend)
-            glEnable(GL_BLEND);
-        if (lighting)
-            glDisable(GL_LIGHTING);
-        RenderUtil.glColour(colour);
-        float width = drawCharacter(character, x, y);
-        if (!texture)
-            glDisable(GL_TEXTURE_2D);
-        if (!blend)
-            glDisable(GL_BLEND);
-        if (lighting)
-            glEnable(GL_LIGHTING);
-        glPopMatrix();
-        return width;
-    }
 
-    /**
-     * Draws a specified character's glyph page at specified x, y co-ordinates.
-     * This method is mainly intended for testing purposes
-     *
-     * @param c      the character of glyph page
-     * @param x      the x co-ordinate
-     * @param y      the y co-ordinate
-     * @param colour the colour
-     */
-    public void drawGlyph(char c, float x, float y, int colour) {
-        GlyphPage glyphPage = getGlyphPage(c);
-        glPushMatrix();
-        boolean blend = glIsEnabled(GL_BLEND);
-        boolean lighting = glIsEnabled(GL_LIGHTING);
-        boolean texture = glIsEnabled(GL_TEXTURE_2D);
-        x = (int) x;
-        y = (int) y;
-        if (!texture)
-            glEnable(GL_TEXTURE_2D);
-        if (!blend)
-            glEnable(GL_BLEND);
-        if (lighting)
-            glDisable(GL_LIGHTING);
-        RenderUtil.glColour(colour);
-        int textureId = glGetInteger(GL_TEXTURE_2D);
-        if (textureId != glyphPage.getTexture().getTextureID())
-            glBindTexture(GL_TEXTURE_2D, glyphPage.getTexture().getTextureID());
-        RenderUtil.drawTextureQuad(x, y, IMG_SIZE, IMG_SIZE, 0, 0, 1, 1);
-        if (textureId != glyphPage.getTexture().getTextureID())
-            glBindTexture(GL_TEXTURE_2D, textureId);
-        if (!texture)
-            glDisable(GL_TEXTURE_2D);
-        if (!blend)
-            glDisable(GL_BLEND);
-        if (lighting)
-            glEnable(GL_LIGHTING);
-        glPopMatrix();
-    }
-
-    /**
-     * Returns the width of the specified string if drawn to the screen
-     *
-     * @param text the text
-     * @return the width of the specified text
-     */
     public float getStringWidth(String text) {
         return (float) text.chars().mapToDouble(c -> getCharacterWidth((char) c)).sum();
     }
 
-    /**
-     * Returns the width of the specified character if drawn to the screen
-     *
-     * @param c the character
-     * @return the width of the specified character
-     */
     public float getCharacterWidth(char c) {
         return (float) getGlyphPage(c).getCharacterData(c).getWidth();
     }
 
-    /**
-     * Returns the height of the specified string if drawn to the screen
-     *
-     * @param text the text
-     * @return the height of the specified text
-     */
     public float getStringHeight(String text) {
         return (float) text.chars().mapToDouble(c -> getCharacterHeight((char) c)).max().orElse(0);
     }
 
-    /**
-     * Returns the height of the specified character if drawn to the screen
-     *
-     * @param c the character
-     * @return the height of the specified character
-     */
+
     public float getCharacterHeight(char c) {
         return (float) getGlyphPage(c).getCharacterData(c).getHeight();
-    }
-
-    /**
-     * Returns the max-height of the standard ascii characters if drawn to the screen
-     *
-     * @return the max-height of standard ascii characters
-     */
-    public float getMaxHeight() {
-        return getMaxHeight('a');
-    }
-
-    /**
-     * Returns the max-height of the specified character's glyph page if drawn to the screen
-     *
-     * @param c the character
-     * @return the max-height of the specified character's glyph page
-     */
-    public float getMaxHeight(char c) {
-        return (float) getGlyphPage(c).getMaxHeight();
     }
 
     private float drawCharacter(char character, float x, float y) {
