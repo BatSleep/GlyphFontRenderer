@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 group = 'com.github.BatSleep'
@@ -8,6 +9,26 @@ version = '0.0.4'
 java {
     withSourcesJar()
     withJavadocJar()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = 'GithubPackages'
+            url = 'https://maven.pkg.github.com/BatSleep/GlyphFontRenderer'
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+
 }
 
 repositories {
