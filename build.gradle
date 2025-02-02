@@ -22,13 +22,6 @@ publishing {
             }
         }
     }
-
-    publications {
-        maven(MavenPublication) {
-            from components.java
-        }
-    }
-
 }
 
 repositories {
@@ -48,6 +41,11 @@ dependencies {
 
     implementation "org.lwjgl:lwjgl:2.9.4-nightly"
     implementation "org.lwjgl:util:2.9.4-nightly"
+}
+
+wrapper {
+    gradleVersion = "7.3.3"
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 test {
